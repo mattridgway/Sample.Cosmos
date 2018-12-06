@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -37,6 +38,31 @@ namespace Sample.Cosmos.BookApi.Repositories
             var book = (BookEntity)(dynamic)document.Resource;
 
             return new Book { Id = book.Id, Name = book.Name, Description = book.Description, ISBN = book.ISBN };
+        }
+
+        public async Task<Book> UpdateBookAsync(Book book)
+        {
+            var collectionLink = UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName);
+            var existingDocument = _client.CreateDocumentQuery(collectionLink)
+                        .Where(doc => doc.Id == book.Id)
+                        .AsEnumerable()
+                        .Single();
+            existingDocument.SetPropertyValue("Name", book.Name);
+            existingDocument.SetPropertyValue("Description", book.Description);
+            existingDocument.SetPropertyValue("ISBN", book.ISBN);
+
+            var updatedDocument = await _client.ReplaceDocumentAsync(existingDocument,
+                options: new RequestOptions
+                {
+                    AccessCondition = new AccessCondition
+                    {
+                        Condition = existingDocument.ETag,
+                        Type = AccessConditionType.IfMatch
+                    }
+                });
+            var updatedBook = (BookEntity)(dynamic)updatedDocument.Resource;
+
+            return new Book { Id = updatedBook.Id, Name = updatedBook.Name, Description = updatedBook.Description, ISBN = updatedBook.ISBN };
         }
 
         public void Dispose()

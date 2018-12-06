@@ -30,5 +30,12 @@ namespace Sample.Cosmos.BookApi.Controllers
             var book = await _bookRepository.GetBookAsync(id);
             return book.ToViewModel();
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<BookViewModel>> Update(string id, UpdateBookViewModel viewModel)
+        {
+            var book = await _bookRepository.UpdateBookAsync(viewModel.ToModel(id));
+            return book.ToViewModel();
+        }
     }
 }
