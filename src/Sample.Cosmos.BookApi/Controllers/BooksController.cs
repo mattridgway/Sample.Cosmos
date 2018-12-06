@@ -27,15 +27,32 @@ namespace Sample.Cosmos.BookApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BookViewModel>> Read(string id)
         {
-            var book = await _bookRepository.GetBookAsync(id);
-            return book.ToViewModel();
+            try
+            {
+                var book = await _bookRepository.GetBookAsync(id);
+                return book.ToViewModel();
+            }
+            catch(BookNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<BookViewModel>> Update(string id, UpdateBookViewModel viewModel)
         {
-            var book = await _bookRepository.UpdateBookAsync(viewModel.ToModel(id));
-            return book.ToViewModel();
+            try { 
+                var book = await _bookRepository.UpdateBookAsync(viewModel.ToModel(id));
+                return book.ToViewModel();
+            }
+            catch (BookNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidBookException)
+            {
+                return BadRequest();
+            }
         }
     }
 }
