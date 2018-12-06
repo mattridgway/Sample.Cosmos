@@ -12,6 +12,11 @@ namespace Sample.Cosmos.BookApi
         {
             services.AddMvc();
             services.AddTransient<IBookRepository, CosmosBookRepository>();
+            services.Configure<CosmosConfiguration>(options =>
+            {
+                options.Key = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+                options.Endpoint = "https://localhost:8081";
+            });
         }
 
         public void Configure(IApplicationBuilder app)
