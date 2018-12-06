@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Sample.Cosmos.BookApi.Repositories;
 
 namespace Sample.Cosmos.BookApi
 {
@@ -10,6 +11,7 @@ namespace Sample.Cosmos.BookApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddTransient<IBookRepository, CosmosBookRepository>();
         }
 
         public void Configure(IApplicationBuilder app)
