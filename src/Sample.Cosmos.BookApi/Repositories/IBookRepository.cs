@@ -6,5 +6,6 @@ namespace Sample.Cosmos.BookApi.Repositories
     public interface IBookRepository
     {
         Task<Book> CreateBookAsync(string name, string description, string ISBN);
+        Task<Book> GetBookAsync(string id);
     }
 }

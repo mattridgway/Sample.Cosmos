@@ -30,6 +30,15 @@ namespace Sample.Cosmos.BookApi.Repositories
             return new Book { Id = book.Id, Name = book.Name, Description = book.Description, ISBN = book.ISBN };
         }
 
+        public async Task<Book> GetBookAsync(string id)
+        {
+            var docLink = UriFactory.CreateDocumentUri(_databaseName, _collectionName, id);
+            var document = await _client.ReadDocumentAsync(docLink);
+            var book = (BookEntity)(dynamic)document.Resource;
+
+            return new Book { Id = book.Id, Name = book.Name, Description = book.Description, ISBN = book.ISBN };
+        }
+
         public void Dispose()
         {
             _client.Dispose();
